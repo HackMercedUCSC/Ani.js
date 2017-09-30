@@ -34,7 +34,7 @@ class Node extends EventEmitter {
     this.children = [];
 
     this.animations = [];
-    this.waitingAnimations = [];
+    this.waitingTests = [];
 
     if (!opt.filters) opt.filters = {};
     if(!opt.filters.dropShadow) opt.filters.dropShadow = {};
@@ -76,19 +76,23 @@ class Node extends EventEmitter {
     const cb = () => {
       if (hit) return;
       hit = true;
+      if (cur.event && cur.target) cur.target.removeListener(cur.event, cb);
+      if (cur.test) this.waitingTests.splice(this.waitingTests.indexOf(waitingTest), 1);
       this.runCondition(index + 1, conditions, animationRequests);
     };
 
     if (cur.time !== undefined) {
-      setTimeout(cb, cur.time);
+      setTimeout(cb, cur.time*1000);
     }
-    if (cur.event && cur.eventTarget) {
-      cur.eventTarget.on(cur.event, cb);
+    if (cur.event && cur.target) {
+      cur.target.on(cur.event, cb);
+    } else if (cur.event || cur.target) {
+      throw new Error('Expect both "event" and "target" properties in animation request.');
     }
-    /*if (cur.prop) {
-      const value = typeof cur.value == 'object' ? cur.value[cur.valueProp] : cur.value;
-      if (cur.propTarget[cur.prop] == cur.value)
-    }*/
+    const waitingTest = { test: cur.test, cb: cb };
+    if (cur.test) {
+      this.waitingTests.push(waitingTest);
+    }
   }
 
   processAnimationRequest(animationRequests) {
@@ -98,6 +102,10 @@ class Node extends EventEmitter {
   }
 
   update(delta) {
+    this.waitingTests.forEach(test => {
+      if (test.test()) test.cb();
+    });
+
     this.animations.forEach(animation => {
       animation.update(delta);
     });
@@ -151,6 +159,10 @@ class Node extends EventEmitter {
     node.parent = null;
     node.ctx = null;
     return true;
+  }
+
+  setPosition(obj) {
+    this.position = Victor.fromObject(obj);
   }
 }
 

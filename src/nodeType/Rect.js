@@ -12,8 +12,9 @@ class Rect extends Shape {
 
   draw() {
     super.draw();
-    if (this.stroke) this.ctx.strokeRect(this.position.x, this.position.y, this.size.x, this.size.y);
-    if (this.fill) this.ctx.fillRect(this.position.x, this.position.y, this.size.x, this.size.y);
+    // Stupid scale(2, 2) causes rectangle to screw up
+    if (this.stroke) this.ctx.strokeRect(this.position.x, this.position.y, this.size.x/2, this.size.y/2);
+    if (this.fill) this.ctx.fillRect(this.position.x, this.position.y, this.size.x/2, this.size.y/2);
   }
 }
 

@@ -5,7 +5,11 @@
       let node;
 
       function ready() {
-          node = new Ani.Type.Rect({ position: { x: 50, y: 0 }, size: {x: 50, y: 50 }})
+          node = new Ani.Type.Polygon({
+            position: { x: 10, y: 10 },
+            points: [{x: 0, y: 0}, {x: 50, y: 0}, {x: 50, y: 50}],
+            curves: [{index: 1, x: 100, y: 25}]
+          });
           Ani.init(node, document.getElementById('canvas').getContext('2d'), 500, 500);
       }
     </script>
