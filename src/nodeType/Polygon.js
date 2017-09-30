@@ -19,7 +19,7 @@ class Polygon extends Shape {
 
   draw() {
     if (!this.points.length) return;
-    
+
     super.draw();
     this.ctx.beginPath();
 
