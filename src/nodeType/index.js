@@ -2,6 +2,8 @@
 module.exports = {
   Rect: require('./Rect'),
   Circle: require('./Circle'),
+  Text: require('./Text'),
+  Image: require('./ImageNode'),
+  CurvedRect: require('./CurvedRect')
   Polygon: require('./Polygon'),
-  Text: require('./Text')
 };

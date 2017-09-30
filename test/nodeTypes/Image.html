@@ -1,0 +1,16 @@
+<htmk>
+  <head>
+    <script src="../../build/ani.js"></script>
+    <script>
+      let node;
+
+      function ready() {
+        node = new Ani.Type.Image({ position: { x: 10, y: 10 }, crop: { x: 250, y: 250}, src: "./cat.jpg" });
+        Ani.init(node, document.getElementById('canvas').getContext('2d'), 500, 500);
+      }
+    </script>
+  </head>
+<body onLoad="ready()">
+  <canvas id="canvas">Unable to load canvas!</canvas>
+</body>
+</html>
