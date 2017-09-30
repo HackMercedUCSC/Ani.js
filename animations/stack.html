@@ -1,5 +1,6 @@
 <html>
   <head>
+    <link rel="stylesheet" href="base.css">
     <script src="../build/ani.js"></script>
     <script>
 
@@ -111,7 +112,7 @@
             setTimeout(() => stack.remove({x: stack.position.x + 100, y: 32*i + 10}), 18000 - 1500*i)
           }
 
-          Ani.init(scene, document.getElementById('canvas').getContext('2d'), 500, 500);
+          Ani.init(scene, document.getElementById('canvas').getContext('2d'), window.innerWidth, window.innerHeight);
       }
     </script>
   </head>

@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="base.css">
+    <script src="../build/ani.js"></script>
+    <script>
+
+      class Queue extends Ani.Node {
+        constructor(opt) {
+          super(opt);
+
+          this.offsetX = 100;
+          this.offsetY = 100;
+
+          this.items = []
+        }
+
+        add(scene, item) {
+          this.items.push(item);
+
+          console.log(item.position.x, this.position.y);
+          item.alpha = 0;
+          item.animate({
+            position: {x: item.position.x, y: this.position.y - this.offsetY},
+            time: 0.5,
+            func: 'inOutQuad',
+            alpha: 1
+          });
+
+          scene.addChild(item);
+        }
+
+        remove(pos) {
+          const item = this.items.shift();
+          item.animate({
+            position: {x: item.position.x - this.offsetX, y: this.position.y - this.offsetY},
+            time: 0.5,
+            alpha: 0.01
+          });
+
+          return item;
+        }
+      }
+
+      class Item extends Ani.Type.Rect {
+        constructor(opt) {
+          super(opt);
+
+          this.radius = 22;
+          this.size.x = 45;
+          this.size.y = 45;
+
+          this.fill = true;
+          this.fillStyle = '#eef';
+
+          this.addChild(new Ani.Type.Text({ fill: true, text: opt.value, position: { x: this.size.x/2, y: this.size.y/2}, textBaseline: 'middle' }));
+        }
+      }
+
+      function ready() {
+          const scene = new Ani.Node();
+          const queue = new Queue({ position: { x: 150, y: 150 }});
+          scene.addChild(queue);
+
+          const items = [];
+          for (let i = 1; i <= 5; i++) {
+            const item = new Item({ position: { x: 90 * i , y: 45 }, value: i});
+
+            setTimeout(() => queue.add(scene, item), 1000*i - 1000);
+            setTimeout(() => queue.remove({x: 0, y: 0}), 13000 - 1500*i);
+            // setTimeout(() => queue.remove({x: queue.position.x + 100, y: 32*i + 10}), 13000 - 1500*i)
+          }
+
+          Ani.init(scene, document.getElementById('canvas').getContext('2d'), window.innerWidth, window.innerHeight);
+      }
+    </script>
+  </head>
+<body onLoad="ready()">
+  <canvas id="canvas">Unable to load canvas!</canvas>
+</body>
+</html>
