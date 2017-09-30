@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "node scripts/compile.js"
+    "compile": "node scripts/compile.js",
+    "watch:src": "nodemon --watch src/ --watch test/ --exec npm run-script compile",
+    "start": "npm run watch:src"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +16,8 @@
     "browserify": "^14.4.0",
     "uglifyify": "^4.0.4",
     "victor": "^1.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
   }
 }
