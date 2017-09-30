@@ -7,15 +7,19 @@ class Polygon extends Shape {
   constructor(opt) {
     super(opt);
 
-    this.points = opt.points.map(point => Victor.fromObject(point));
+    this.points = opt.points ? opt.points.map(point => Victor.fromObject(point)) : [];
     this.curves = [];
 
-    opt.curves.forEach((curve, index) => {
-      this.curves[curve.index !== undefined ? curve.index : index] = Victor.fromObject(curve);
-    });
+    if (opt.curves) {
+      opt.curves.forEach((curve, index) => {
+        this.curves[curve.index !== undefined ? curve.index : index] = Victor.fromObject(curve);
+      });
+    }
   }
 
   draw() {
+    if (!this.points.length) return;
+    
     super.draw();
     this.ctx.beginPath();
 

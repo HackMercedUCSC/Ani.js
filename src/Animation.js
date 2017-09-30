@@ -86,7 +86,7 @@ class Animation extends EventEmitter {
   }
 
   parseTarget(target, key, nodeTarget, relValues) { // Create relValues if object exists, relValues COULD BE FUNCTION
-    // if (typeof relValues != 'function') console.log(JSON.stringify(target), key, JSON.stringify(nodeTarget), JSON.stringify(relValues));
+    if (!nodeTarget) throw new Error('Could not find attribute '+key+'!');
     if (typeof target[key] == 'object') {
       if (relValues != 'function') {
         if (target[key].length !== undefined) relValues[key] = [];
@@ -110,6 +110,7 @@ class Animation extends EventEmitter {
 
   finished(cb) {
     this.once('finished', cb);
+    return this;
   }
 }
 
