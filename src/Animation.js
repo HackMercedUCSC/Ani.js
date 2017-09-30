@@ -2,6 +2,8 @@
 const EventEmitter = require('events');
 const Victor = require('victor');
 
+const EasingFunctions = require('./lib/easings');
+
 class Animation extends EventEmitter {
   constructor(node, opt) {
     super();
@@ -20,10 +22,14 @@ class Animation extends EventEmitter {
     }
 
     this.relative = {};
-    Object.keys(this.opt).forEach(key => {
-      if (key == 'relative' || key == 'time' || key == 'func' || key == 'passThrough') return;
-      this.parseTarget(this.opt, key, this.node, this.relative);
-    });
+    if (!this.relative) {
+      Object.keys(this.opt).forEach(key => {
+        if (key == 'relative' || key == 'time' || key == 'func' || key == 'passThrough') return;
+        this.parseTarget(this.opt, key, this.node, this.relative);
+      });
+    } else {
+      this.relative = this.opt;
+    }
 
     if (this.passThrough) {
       if (!this.relative.position) this.relative.position = {};
@@ -92,63 +98,3 @@ class Animation extends EventEmitter {
 }
 
 module.exports = Animation;
-
-/*
-Node:
-{
-  position: {
-    x: 1,
-    y: 1
-  },
-  scale: { x: 1, y : 1},
-  rotation: 0,
-  points: [...]
-}
-
-opt:
-{
-  rotation: Math.PI,
-  position: {
-    x: 40
-  }
-}
-
-init:
-{
-  rotation: 0,
-  position: {
-    x: 1
-  }
-}
-*/
-
-
-
-const EasingFunctions = {
-  // no easing, no acceleration
-  linear: function (t) { return t },
-  // accelerating from zero velocity
-  easeInQuad: function (t) { return t*t },
-  // decelerating to zero velocity
-  easeOutQuad: function (t) { return t*(2-t) },
-  // acceleration until halfway, then deceleration
-  easeInOutQuad: function (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t },
-  // accelerating from zero velocity
-  easeInCubic: function (t) { return t*t*t },
-  // decelerating to zero velocity
-  easeOutCubic: function (t) { return (--t)*t*t+1 },
-  // acceleration until halfway, then deceleration
-  easeInOutCubic: function (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1 },
-  // accelerating from zero velocity
-  easeInQuart: function (t) { return t*t*t*t },
-  // decelerating to zero velocity
-  easeOutQuart: function (t) { return 1-(--t)*t*t*t },
-  // acceleration until halfway, then deceleration
-  easeInOutQuart: function (t) { return t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t },
-  // accelerating from zero velocity
-  easeInQuint: function (t) { return t*t*t*t*t },
-  // decelerating to zero velocity
-  easeOutQuint: function (t) { return 1+(--t)*t*t*t*t },
-  // acceleration until halfway, then deceleration
-  easeInOutQuint: function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t }
-}
