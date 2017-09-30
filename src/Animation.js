@@ -61,7 +61,7 @@ class Animation extends EventEmitter {
     }
 
     Object.keys(this.relative).forEach(key => {
-      this.parseTarget(this.relative, key, node, (relativeTarget, key, nodeTarget) => {
+      this.parseTarget(this.relative, key, this.node, (relativeTarget, key, nodeTarget) => {
         if (this.passThrough && relativeTarget == this.relative.position) return; // Passthrough already modifies position
 
         nodeTarget[key] += relativeTarget[key]*easeDelta;
