@@ -4,7 +4,7 @@ const Module = {
   Type: require('./nodeType'),
 
   init: (node, ctx, width, height) => {
-    node.ctx = ctx;
+    node.setCtx(ctx);
 
     ctx.canvas.width = width*2;
     ctx.canvas.height = height*2;
@@ -19,7 +19,7 @@ const Module = {
       const delta = (Date.now() - lastUpdate)/1000;
       lastUpdate = Date.now();
 
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.clearRect(-1, -1, ctx.canvas.width + 2, ctx.canvas.height + 2);
 
       node.update(delta);
     }, 1000/60);

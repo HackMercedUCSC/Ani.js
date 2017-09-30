@@ -30,11 +30,12 @@ class Node extends EventEmitter {
     this.position = opt.position ? new Victor.fromObject(opt.position) : new Victor(0, 0);
     this.scale = opt.scale ? new Victor.fromObject(opt.scale) : new Victor(1, 1);
     this.rotation = opt.rotation || 0; // Radians
+    this.origin = opt.origin ? new Victor.fromObject(opt.origin) : new Victor(0, 0);
 
     this.children = [];
 
     this.animations = [];
-    this.waitingAnimations = [];
+    this.waitingTests = [];
 
     if (!opt.filters) opt.filters = {};
     if(!opt.filters.dropShadow) opt.filters.dropShadow = {};
@@ -76,19 +77,23 @@ class Node extends EventEmitter {
     const cb = () => {
       if (hit) return;
       hit = true;
+      if (cur.event && cur.target) cur.target.removeListener(cur.event, cb);
+      if (cur.test) this.waitingTests.splice(this.waitingTests.indexOf(waitingTest), 1);
       this.runCondition(index + 1, conditions, animationRequests);
     };
 
     if (cur.time !== undefined) {
-      setTimeout(cb, cur.time);
+      setTimeout(cb, cur.time*1000);
     }
-    if (cur.event && cur.eventTarget) {
-      cur.eventTarget.on(cur.event, cb);
+    if (cur.event && cur.target) {
+      cur.target.on(cur.event, cb);
+    } else if (cur.event || cur.target) {
+      throw new Error('Expect both "event" and "target" properties in animation request.');
     }
-    /*if (cur.prop) {
-      const value = typeof cur.value == 'object' ? cur.value[cur.valueProp] : cur.value;
-      if (cur.propTarget[cur.prop] == cur.value)
-    }*/
+    const waitingTest = { test: cur.test, cb: cb };
+    if (cur.test) {
+      this.waitingTests.push(waitingTest);
+    }
   }
 
   processAnimationRequest(animationRequests) {
@@ -98,6 +103,10 @@ class Node extends EventEmitter {
   }
 
   update(delta) {
+    this.waitingTests.forEach(test => {
+      if (test.test()) test.cb();
+    });
+
     this.animations.forEach(animation => {
       animation.update(delta);
     });
@@ -122,6 +131,11 @@ class Node extends EventEmitter {
 
     this.ctx.filter = filterFuncs.join(' ') || 'none';
 
+    this.ctx.translate(this.position.x + this.origin.x, this.position.y + this.origin.y);
+    this.ctx.rotate(this.rotation);
+    this.ctx.scale(this.scale.x, this.scale.y);
+    this.ctx.translate(-this.position.x - this.origin.x, -this.position.y - this.origin.y);
+
     this.draw();
 
     this.children.forEach(child => {
@@ -133,6 +147,11 @@ class Node extends EventEmitter {
 
   draw() {}
   finishDraw() {
+    this.ctx.translate(this.position.x + this.origin.x, this.position.y + this.origin.y);
+    this.ctx.rotate(-this.rotation);
+    this.ctx.scale(1/this.scale.x, 1/this.scale.y);
+    this.ctx.translate(-this.position.x - this.origin.x, -this.position.y - this.origin.y);
+
     this.ctx.filter = this.oldFilters;
   }
 
@@ -151,6 +170,17 @@ class Node extends EventEmitter {
     node.parent = null;
     node.ctx = null;
     return true;
+  }
+
+  setPosition(obj) {
+    this.position = Victor.fromObject(obj);
+  }
+
+  setCtx(ctx) {
+    this.ctx = ctx;
+    this.children.forEach(child => {
+      child.setCtx(ctx);
+    });
   }
 }
 
