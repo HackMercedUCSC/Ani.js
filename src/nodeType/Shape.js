@@ -30,6 +30,7 @@ class Shape extends Node {
   }
 
   finishDraw() {
+    super.finishDraw();
     this.ctx.strokeStyle = this.oldStrokeStyle;
     this.ctx.fillStyle = this.oldFillStyle;
     this.ctx.lineWidth = this.oldLineWidth;

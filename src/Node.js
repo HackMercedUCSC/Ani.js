@@ -131,6 +131,11 @@ class Node extends EventEmitter {
 
     this.ctx.filter = filterFuncs.join(' ') || 'none';
 
+    this.ctx.translate(this.position.x + this.origin.x, this.position.y + this.origin.y);
+    this.ctx.rotate(this.rotation);
+    this.ctx.scale(this.scale.x, this.scale.y);
+    this.ctx.translate(-this.position.x - this.origin.x, -this.position.y - this.origin.y);
+
     this.draw();
 
     this.children.forEach(child => {
@@ -142,6 +147,11 @@ class Node extends EventEmitter {
 
   draw() {}
   finishDraw() {
+    this.ctx.translate(this.position.x + this.origin.x, this.position.y + this.origin.y);
+    this.ctx.rotate(-this.rotation);
+    this.ctx.scale(1/this.scale.x, 1/this.scale.y);
+    this.ctx.translate(-this.position.x - this.origin.x, -this.position.y - this.origin.y);
+
     this.ctx.filter = this.oldFilters;
   }
 
