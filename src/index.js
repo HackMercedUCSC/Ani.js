@@ -1,6 +1,6 @@
 
 const Module = {
-  Node: require('./node'),
+  Node: require('./Node'),
   Type: require('./nodeType'),
 
   init: (node, ctx) => {
