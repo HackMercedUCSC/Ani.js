@@ -14,8 +14,7 @@ class Circle extends Shape {
 
   draw() {
     super.draw();
-    // console.log(this);
-    // console.log(this.radius);
+
     this.ctx.arc(this.position.x, this.position.y, this.radius, this.startAngle, this.endAngle);
     this.ctx.stroke();
   }

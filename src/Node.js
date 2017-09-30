@@ -69,12 +69,12 @@ class Node extends EventEmitter {
       child.update(delta);
     });
 
-    // Finishing stuff here
+    this.finishDraw();
   }
 
-  draw() {
+  draw() {}
 
-  }
+  finishDraw() {}
 
   addChild(node) {
     if (!this.children.includes(node) && !node.parent && this.parent != node) {
