@@ -4,6 +4,5 @@ module.exports = {
   Circle: require('./Circle'),
   Text: require('./Text'),
   Image: require('./ImageNode'),
-  CurvedRect: require('./CurvedRect')
-  Polygon: require('./Polygon'),
+  Polygon: require('./Polygon')
 };

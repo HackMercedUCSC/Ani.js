@@ -28,6 +28,11 @@ class Text extends Shape {
     if (this.stroke) this.ctx.strokeText(this.text, this.position.x, this.position.y);
     if (this.fill) this.ctx.fillText(this.text, this.position.x, this.position.y);
   }
+
+  measure() {
+    this.ctx.font = this.fontSize + 'px ' + this.font
+    return this.ctx.measureText(this.text);
+  }
 }
 
 module.exports = Text;

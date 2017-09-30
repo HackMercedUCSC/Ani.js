@@ -20,8 +20,12 @@ class Animation extends EventEmitter {
       throw new Error('Invalid animation time!');
     }
 
+
+  }
+
+  ready() {
     this.relative = {};
-    if (!opt.relative) {
+    if (!this.opt.relative) {
       Object.keys(this.opt).forEach(key => {
         if (key == 'relative' || key == 'time' || key == 'func' || key == 'passThrough') return;
         this.parseTarget(this.opt, key, this.node, this.relative);
@@ -69,6 +73,7 @@ class Animation extends EventEmitter {
       this.parseTarget(this.relative, key, this.node, (relativeTarget, key, nodeTarget) => {
         if (this.passThrough && relativeTarget == this.relative.position) return; // Passthrough already modifies position
 
+        if (typeof relativeTarget == 'function') relativeTarget(easeDelta, this.time/this.timeLength);
         nodeTarget[key] += relativeTarget[key]*easeDelta;
       });
     });
@@ -81,18 +86,30 @@ class Animation extends EventEmitter {
   }
 
   parseTarget(target, key, nodeTarget, relValues) { // Create relValues if object exists, relValues COULD BE FUNCTION
+    // if (typeof relValues != 'function') console.log(JSON.stringify(target), key, JSON.stringify(nodeTarget), JSON.stringify(relValues));
     if (typeof target[key] == 'object') {
-      if (relValues != 'function') relValues[key] = {};
+      if (relValues != 'function') {
+        if (target[key].length !== undefined) relValues[key] = [];
+        else relValues[target[key].index !== undefined ? target[key].index : key] = {};
+      }
       Object.keys(target[key]).forEach(childKey => {
-        this.parseTarget(target[key], childKey, nodeTarget[key], typeof relValues == 'function' ? relValues : relValues[key]);
+        if (childKey == 'index') return;
+        this.parseTarget(target[key],
+                         childKey,
+                         target[key].index !== undefined ? nodeTarget[target[key].index] : nodeTarget[key],
+                         typeof relValues == 'function' ? relValues : relValues[target[key].index !== undefined ? target[key].index : key]);
       });
-      return;
-    } else if (typeof target[key] == 'array') {
-      if (typeof relValues != 'function') relValues[key] = [];
+    } else if (typeof target[key] == 'function') {
+      if (typeof relValues != 'function') relValues[key] = target[key];
+      else relValues(target, key);
     } else { // Values
       if (typeof relValues != 'function') relValues[key] = target[key] - nodeTarget[key];
       else relValues(target, key, nodeTarget);
     }
+  }
+
+  finished(cb) {
+    this.once('finished', cb);
   }
 }
 

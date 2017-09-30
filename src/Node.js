@@ -25,12 +25,14 @@ const FILTER_ENDINGS = {
 class Node extends EventEmitter {
   constructor(opt={}) {
     super();
-    this.parent = opt.parent || null;
-    this.ctx = this.parent ? this.parent.ctx : null;
+    this.parent = null;
+    this.ctx = null;
     this.position = opt.position ? new Victor.fromObject(opt.position) : new Victor(0, 0);
     this.scale = opt.scale ? new Victor.fromObject(opt.scale) : new Victor(1, 1);
     this.rotation = opt.rotation || 0; // Radians
     this.origin = opt.origin ? new Victor.fromObject(opt.origin) : new Victor(0, 0);
+    this.clipping = opt.clipping || [];
+    this.alpha = opt.alpha !== undefined ? opt.alpha : 1.0;
 
     this.children = [];
 
@@ -61,17 +63,27 @@ class Node extends EventEmitter {
 
   animate() {
     const args = Array.prototype.slice.call(arguments);
-    const animationRequests = typeof args.slice(-1)[0] == 'array' ? args.slice(-1)[0] : args.slice(-1);
+    if (args.length == 0) throw new Error('Must pass at least one parameter to animate()');
+
+    let animationRequests = typeof args.slice(-1)[0] == 'array' ? args.slice(-1)[0] : args.slice(-1);
     const conditions = args.slice(0, -1);
 
     if (typeof animationRequests[0] == 'array') animationRequests = animationRequests[0];
 
-    this.runCondition(0, conditions, animationRequests);
+    const animations = [];
+
+    animationRequests.forEach(aniRequest => {
+      animations.push(new Animation(this, aniRequest));
+    });
+
+    this.runCondition(0, conditions, animations);
+
+    return animations.length == 1 ? animations[0] : animations;
   }
 
-  runCondition(index, conditions, animationRequests) {
+  runCondition(index, conditions, animations) {
     const cur = conditions[index];
-    if (!cur) return this.processAnimationRequest(animationRequests);
+    if (!cur) return this.startAnimations(animations);
 
     let hit = false;
     const cb = () => {
@@ -79,7 +91,7 @@ class Node extends EventEmitter {
       hit = true;
       if (cur.event && cur.target) cur.target.removeListener(cur.event, cb);
       if (cur.test) this.waitingTests.splice(this.waitingTests.indexOf(waitingTest), 1);
-      this.runCondition(index + 1, conditions, animationRequests);
+      this.runCondition(index + 1, conditions, animations);
     };
 
     if (cur.time !== undefined) {
@@ -96,9 +108,10 @@ class Node extends EventEmitter {
     }
   }
 
-  processAnimationRequest(animationRequests) {
-    animationRequests.forEach(aniRequest => {
-      this.animations.push(new Animation(this, aniRequest));
+  startAnimations(animations) {
+    animations.forEach(animation => {
+      animation.ready();
+      this.animations.push(animation);
     });
   }
 
@@ -111,7 +124,9 @@ class Node extends EventEmitter {
       animation.update(delta);
     });
 
-    this.oldFilters = this.ctx.filter
+    if (!this.ctx) return; // No longer has a parent
+
+    this.oldFilters = this.ctx.filter;
 
     let filterFuncs = this.ctx.filter == 'none' ? [] : this.ctx.filter.split(') ');
     Object.keys(this.filters).forEach(key => {
@@ -131,10 +146,26 @@ class Node extends EventEmitter {
 
     this.ctx.filter = filterFuncs.join(' ') || 'none';
 
+    this.ctx.save();
+
+    const oldAlpha = this.ctx.globalAlpha;
+    this.ctx.globalAlpha *= this.alpha;
+
     this.ctx.translate(this.position.x + this.origin.x, this.position.y + this.origin.y);
     this.ctx.rotate(this.rotation);
     this.ctx.scale(this.scale.x, this.scale.y);
     this.ctx.translate(-this.position.x - this.origin.x, -this.position.y - this.origin.y);
+
+    if (this.clipping.length > 2) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.clipping[0].x, this.clipping[0].y);
+      for (let i = 0; i < this.clipping.length; i++) {
+        let clipI = (i+1) % this.clipping.length;
+        this.ctx.lineTo(this.clipping[clipI].x, this.clipping[clipI].y);
+      }
+      this.ctx.closePath();
+      this.ctx.clip();
+    }
 
     this.draw();
 
@@ -145,6 +176,7 @@ class Node extends EventEmitter {
     });
 
     this.ctx.translate(-this.position.x, -this.position.y);
+    this.ctx.globalAlpha = oldAlpha;
 
     this.finishDraw();
   }
@@ -157,13 +189,15 @@ class Node extends EventEmitter {
     this.ctx.translate(-this.position.x - this.origin.x, -this.position.y - this.origin.y);
 
     this.ctx.filter = this.oldFilters;
+
+    this.ctx.restore();
   }
 
   addChild(node) {
     if (!this.children.includes(node) && !node.parent && this.parent != node) {
       this.children.push(node);
       node.parent = this;
-      node.ctx = node.parent.ctx;
+      node.setCtx(node.parent.ctx);
     } else throw new Error('Invalid parent/child assignment');
   }
 
@@ -172,7 +206,7 @@ class Node extends EventEmitter {
     if (index == -1) return false;
     this.children.splice(index, 1);
     node.parent = null;
-    node.ctx = null;
+    node.setCtx(null);
     return true;
   }
 
