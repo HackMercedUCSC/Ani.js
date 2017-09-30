@@ -30,6 +30,7 @@ class Node extends EventEmitter {
     this.position = opt.position ? new Victor.fromObject(opt.position) : new Victor(0, 0);
     this.scale = opt.scale ? new Victor.fromObject(opt.scale) : new Victor(1, 1);
     this.rotation = opt.rotation || 0; // Radians
+    this.origin = opt.origin ? new Victor.fromObject(opt.origin) : new Victor(0, 0);
 
     this.children = [];
 
