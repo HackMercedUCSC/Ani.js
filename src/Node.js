@@ -4,6 +4,24 @@ const Victor = require('victor');
 
 const Animation = require('./Animation');
 
+const FILTER_ENDINGS = {
+  blur: 'px',
+  contrast: '%',
+  brightness: '%',
+  grayscale: '%',
+  hueRotate: 'deg',
+  invert: '%',
+  opacity: '%',
+  saturate: '%',
+  sepia: '%',
+  dropShadow: {
+    offsetX: 'px',
+    offsetY: 'px',
+    blurRadius: 'px',
+    color: ''
+  }
+};
+
 class Node extends EventEmitter {
   constructor(opt) {
     super();
@@ -17,6 +35,27 @@ class Node extends EventEmitter {
 
     this.animations = [];
     this.waitingAnimations = [];
+
+    if (!opt.filters) opt.filters = {};
+    if(!opt.filters.dropShadow) opt.filters.dropShadow = {};
+
+    this.filters = {
+      blur: opt.filters.blur !== undefined ? opt.filters.blur : -1,
+      contrast: opt.filters.contrast !== undefined ? opt.filters.contrast : -1,
+      brightness: opt.filters.brightness !== undefined ? opt.filters.brightness : -1,
+      grayscale: opt.filters.grayscale !== undefined ? opt.filters.grayscale : -1,
+      hueRotate: opt.filters.hueRotate !== undefined ? opt.filters.hueRotate : -1,
+      invert: opt.filters.invert !== undefined ? opt.filters.invert : -1,
+      opacity: opt.filters.opacity !== undefined ? opt.filters.opacity : -1,
+      saturate: opt.filters.saturate !== undefined ? opt.filters.saturate : -1,
+      sepia: opt.filters.sepia !== undefined ? opt.filters.sepia : -1,
+      dropShadow: {
+        offset: opt.offset ? new Victor.fromObject(opt.offset) : new Victor(0, 0),
+        blurRadius:opt.filters.dropShadow.blurRadius ? opt.filters.dropShadow.blurRadius : 0,
+        color: opt.filters.dropShadow.color ? opt.filters.dropShadow.color : 'black',
+        inherit: true
+      }
+    };
   }
 
   animate() {
@@ -63,6 +102,26 @@ class Node extends EventEmitter {
       animation.update(delta);
     });
 
+    this.oldFilters = this.ctx.filter
+
+    let filterFuncs = this.ctx.filter == 'none' ? [] : this.ctx.filter.split(') ');
+    Object.keys(this.filters).forEach(key => {
+      if ((key != 'dropShadow' && this.filters[key] != -1) || this.filters[key].inherit === false) { // if parent has not set filters
+        filterFuncs.forEach((func, index) => {
+          if (func.startsWith(key)) filterFuncs.splice(index, 1);
+        });
+        if (key == 'dropShadow'){
+          filterFuncs.push('drop-shadow(' + this.filters.dropShadow.offset.x + 'px '
+                                          + this.filters.dropShadow.offset.y + 'px '
+                                          + this.filters.dropShadow.blurRadius + 'px '
+                                          + this.filters.dropShadow.color + ')');
+        }
+        else filterFuncs.push(key + '(' + this.filters[key] + FILTER_ENDINGS[key]+ ')');
+      }
+    });
+
+    this.ctx.filter = filterFuncs.join(' ') || 'none';
+
     this.draw();
 
     this.children.forEach(child => {
@@ -73,8 +132,9 @@ class Node extends EventEmitter {
   }
 
   draw() {}
-
-  finishDraw() {}
+  finishDraw() {
+    this.ctx.filter = this.oldFilters;
+  }
 
   addChild(node) {
     if (!this.children.includes(node) && !node.parent && this.parent != node) {
