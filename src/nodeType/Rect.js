@@ -7,7 +7,7 @@ class Rect extends Shape {
   constructor(opt) {
     super(opt);
 
-    this.size = this.size ? new Victor.fromObject(opt.size) : new Victor(100, 100);
+    this.size = opt.size ? new Victor.fromObject(opt.size) : new Victor(100, 100);
   }
 
   draw() {
