@@ -9,7 +9,6 @@ class Animation extends EventEmitter {
     super();
     this.node = node;
     this.opt = opt;
-    this.relative = opt.relative;
     this.func = opt.func || 'linear';
     this.passThrough = opt.passThrough;
     this.startingPosition = node.position.clone();
@@ -22,7 +21,7 @@ class Animation extends EventEmitter {
     }
 
     this.relative = {};
-    if (!this.relative) {
+    if (!opt.relative) {
       Object.keys(this.opt).forEach(key => {
         if (key == 'relative' || key == 'time' || key == 'func' || key == 'passThrough') return;
         this.parseTarget(this.opt, key, this.node, this.relative);
@@ -77,7 +76,7 @@ class Animation extends EventEmitter {
     if (this.time >= this.timeLength) {
       this.node.animations.splice(this.node.animations.indexOf(this), 1);
       this.emit('finished', this.opt);
-      this.node.emit('finished', this.opt, this);
+      this.node.emit('animationFinished', this.opt, this);
     }
   }
 

@@ -23,7 +23,7 @@ const FILTER_ENDINGS = {
 };
 
 class Node extends EventEmitter {
-  constructor(opt) {
+  constructor(opt={}) {
     super();
     this.parent = opt.parent || null;
     this.ctx = this.parent ? this.parent.ctx : null;
@@ -138,9 +138,13 @@ class Node extends EventEmitter {
 
     this.draw();
 
+    this.ctx.translate(this.position.x, this.position.y);
+
     this.children.forEach(child => {
       child.update(delta);
     });
+
+    this.ctx.translate(-this.position.x, -this.position.y);
 
     this.finishDraw();
   }

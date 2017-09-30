@@ -2,6 +2,7 @@
 const Module = {
   Node: require('./Node'),
   Type: require('./nodeType'),
+  Victor: require('victor'),
 
   init: (node, ctx, width, height) => {
     node.setCtx(ctx);
