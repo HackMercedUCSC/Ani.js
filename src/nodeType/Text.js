@@ -9,23 +9,24 @@ class Text extends Shape {
   constructor(opt) {
     super(opt);
 
+    this.text = opt.text;
     this.font = opt.font ? opt.font : 'Arial';
     this.fontSize = opt.fontSize ? opt.fontSize : 16;
     this.textAlign = opt.textAlign ? opt.textAlign : 'center';
     this.textBaseline = opt.textBaseline ? opt.textBaseline : 'alphabetic';
-    this.direction = opt.direction ? opt.direction : 'inherit';
-    this.text = opt.text;
   }
 
   draw() {
-    if(!this.text) {
-      return;
-    }
+    if (!this.text) return;
 
     super.draw();
 
-    this.ctx.font = this.fontSize + 'px ' + this.font + ' ' + this.textAlign + ' ' + this.textBaseline + ' ' + this.direction;
-    this.ctx.strokeText(this.text, this.position.x, this.position.y);
+    this.ctx.font = this.fontSize + 'px ' + this.font
+    this.ctx.textAlign = this.textAlign;
+    this.textBaseline = this.textBaseline;
+
+    if (this.stroke) this.ctx.strokeText(this.text, this.position.x, this.position.y);
+    if (this.fill) this.ctx.fillText(this.text, this.position.x, this.position.y);
   }
 }
 

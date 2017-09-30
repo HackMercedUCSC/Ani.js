@@ -7,19 +7,32 @@ class Shape extends Node {
 
     this.strokeStyle = opt.strokeStyle || '#000';
     this.fillStyle = opt.fillStyle || '#000';
+    this.lineWidth = opt.lineWidth || 1;
+
+    this.stroke = opt.stroke !== undefined ? opt.stroke : true;
+    this.fill = opt.fill !== undefined ? opt.fill : false;
+
+    this.oldStrokeStyle = '';
+    this.oldFillStyle = '';
+    this.oldLineWidth = '';
   }
 
   draw() {
-    const oldStrokeStyle = this.ctx.strokeStyle;
-    const oldFillStyle = this.ctx.fillStyle;
+    this.oldStrokeStyle = this.ctx.strokeStyle;
+    this.oldFillStyle = this.ctx.fillStyle;
+    this.oldLineWidth = this.ctx.lineWidth;
 
     this.ctx.strokeStyle = this.strokeStyle;
     this.ctx.fillStyle = this.fillStyle;
+    this.ctx.lineWidth = this.lineWidth;
 
     super.draw();
+  }
 
-    this.ctx.strokeStyle = oldStrokeStyle;
-    this.ctx.fillStyle = oldFillStyle;
+  finishDraw() {
+    this.ctx.strokeStyle = this.oldStrokeStyle;
+    this.ctx.fillStyle = this.oldFillStyle;
+    this.ctx.lineWidth = this.oldLineWidth;
   }
 }
 

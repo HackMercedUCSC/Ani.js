@@ -5,12 +5,12 @@
       let node;
 
       function ready() {
-        node = new Ani.Type.Circle({ position: { x: 100, y: 100 }, radius: 100, startAngle: Math.PI});
-        Ani.init(node, document.getElementById('canvas').getContext('2d'));
+        node = new Ani.Type.Circle({ position: { x: 100, y: 100 }, radius: 100 });
+        Ani.init(node, document.getElementById('canvas').getContext('2d'), 500, 500);
       }
     </script>
   </head>
 <body onLoad="ready()">
-  <canvas width=500 height=500 id="canvas">Unable to load canvas!</canvas>
+  <canvas id="canvas">Unable to load canvas!</canvas>
 </body>
 </html>

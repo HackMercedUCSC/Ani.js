@@ -14,10 +14,12 @@ class Circle extends Shape {
 
   draw() {
     super.draw();
-    // console.log(this);
-    // console.log(this.radius);
+
+    this.ctx.beginPath();
     this.ctx.arc(this.position.x, this.position.y, this.radius, this.startAngle, this.endAngle);
-    this.ctx.stroke();
+    if (this.stroke) this.ctx.stroke();
+    if (this.fill) this.ctx.fill();
+    this.ctx.closePath();
   }
 }
 
