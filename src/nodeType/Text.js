@@ -23,7 +23,7 @@ class Text extends Shape {
 
     this.ctx.font = this.fontSize + 'px ' + this.font
     this.ctx.textAlign = this.textAlign;
-    this.textBaseline = this.textBaseline;
+    this.ctx.textBaseline = this.textBaseline;
 
     if (this.stroke) this.ctx.strokeText(this.text, this.position.x, this.position.y);
     if (this.fill) this.ctx.fillText(this.text, this.position.x, this.position.y);
