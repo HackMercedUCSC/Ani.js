@@ -12,7 +12,8 @@ class Rect extends Shape {
 
   draw() {
     super.draw();
-    this.ctx.strokeRect(this.position.x, this.position.y, this.size.x, this.size.y);
+    if (this.stroke) this.ctx.strokeRect(this.position.x, this.position.y, this.size.x, this.size.y);
+    if (this.fill) this.ctx.fillRect(this.position.x, this.position.y, this.size.x, this.size.y);
   }
 }
 

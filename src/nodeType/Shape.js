@@ -9,6 +9,9 @@ class Shape extends Node {
     this.fillStyle = opt.fillStyle || '#000';
     this.lineWidth = opt.lineWidth || 1;
 
+    this.stroke = opt.stroke !== undefined ? opt.stroke : true;
+    this.fill = opt.fill !== undefined ? opt.fill : false;
+
     this.oldStrokeStyle = '';
     this.oldFillStyle = '';
     this.oldLineWidth = '';
