@@ -1,5 +1,6 @@
 
 module.exports = {
   Rect: require('./Rect'),
-  Circle: require('./Circle')
+  Circle: require('./Circle'),
+  Text: require('./Text')
 };
