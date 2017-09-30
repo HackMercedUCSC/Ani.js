@@ -165,6 +165,13 @@ class Node extends EventEmitter {
   setPosition(obj) {
     this.position = Victor.fromObject(obj);
   }
+
+  setCtx(ctx) {
+    this.ctx = ctx;
+    this.children.forEach(child => {
+      child.setCtx(ctx);
+    });
+  }
 }
 
 module.exports = Node;

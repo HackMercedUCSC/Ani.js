@@ -4,7 +4,7 @@ const Module = {
   Type: require('./nodeType'),
 
   init: (node, ctx, width, height) => {
-    node.ctx = ctx;
+    node.setCtx(ctx);
 
     ctx.canvas.width = width*2;
     ctx.canvas.height = height*2;
