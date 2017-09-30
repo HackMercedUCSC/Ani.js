@@ -1,0 +1,136 @@
+<htmk>
+  <head>
+    <script src="../../build/ani.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+      let node;
+      var stack = [];
+      let count = 0;
+      let stackXPos = 250 - 25/2;
+      let stackYPos = 250 + 200/2;
+      function ready() {
+        const size = {
+          x: 25,
+          y: 200
+        }
+          stackStick = new Ani.Type.Rect({ position: { x: 250 - size.x/2, y: 250 - size.y/2 }, size: {x: size.x, y: size.y }});
+
+          stackNode1 = new Ani.Type.Rect({
+            position:{
+              x: 0,
+              y: 0
+            },
+            size:{
+              x: 50,
+              y: 50
+            },
+            fill: true,
+            fillStyle: 'black'
+          })
+
+
+          stackNode2 = new Ani.Type.Rect({
+            position:{
+              x: 0,
+              y: 0
+            },
+            size:{
+              x: 50,
+              y: 50
+            },
+            fill: true,
+            fillStyle: 'grey'
+          })
+
+
+          stackNode3 = new Ani.Type.Rect({
+            position:{
+              x: 0,
+              y: 0
+            },
+            size:{
+              x: 50,
+              y: 50
+            },
+            fill: true,
+            fillStyle: 'red'
+          })
+
+          stackStick.addChild(stackNode1);
+          stackStick.addChild(stackNode2);
+          stackStick.addChild(stackNode3);
+
+          Ani.init(stackStick, document.getElementById('canvas').getContext('2d'), 500, 500);
+
+          stack.push(stackNode1);
+          stack.push(stackNode2);
+          stack.push(stackNode3);
+      }
+
+
+      function animatePush(){
+        if (count == 0) stackYPos = 250 + 200/2;
+        let currentStack = stack[count];
+        count++;
+
+        currentStack.animate(
+          {
+            event: 'pushStack', target:currentStack
+          },
+          {
+            time: 2,
+            position: {
+              x: stackXPos,
+              y: stackYPos - 50
+            }
+          }
+        )
+        stackYPos -= 50;
+        currentStack.emit('pushStack');
+      }
+
+      function animatePop(){
+        count--;
+        let currentStack = stack[count];
+
+        currentStack.animate(
+          {
+            event: 'popStack', target:currentStack
+          },
+          {
+            time: 2,
+            position: {
+              x: 0,
+              y: 0
+            }
+          }
+        )
+        currentStack.emit('popStack');
+      }
+
+    </script>
+  </head>
+
+<body onLoad="ready()">
+  <div class="container">
+    <div class="col-md-3">
+      <button class="btn-primary" onclick="animatePush()">Push</button>
+      <button class="btn-primary" onclick="animatePop()">Pop</button>
+    </div>
+
+    <div class="col-md-6">
+      <h1 class="text-center">Rect Test</h1>
+      <canvas width=500 height=500 id="canvas" style="border: 1px solid blue;">Unable to load canvas!</canvas>
+    </div>
+
+    <div class="col-md-3">
+    </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
