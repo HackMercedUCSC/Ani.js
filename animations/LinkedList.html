@@ -21,13 +21,25 @@
           this.items = [];
         }
 
-        add(item,pointerToNext,line) {
+        add(item,pointerToNext,line,scene) {
           this.items.push(item);
           if(pointerToNext == null || line == null){
-            item.animate({position:{x: xpos, y: 150}, time: 1, func: 'inOutBack'});
+            item.animate({
+              position:{x: xpos, y: 150},
+              time: 1,
+              func: 'inOutBack'
+            });
           }else{
-            item.animate({position:{x: xpos, y: 150}, time: 1, func: 'inOutBack'});
-            pointerToNext.animate({position:{x: xpos + 30, y: 150}, time: 1, func: 'inOutBack'});
+            item.animate({
+              position:{x: xpos, y: 150},
+              time: 1,
+              func: 'inOutBack'
+            });
+            pointerToNext.animate({
+              position:{x: xpos + 30, y: 150},
+              time: 1,
+              func: 'inOutBack'
+            });
             curr++;
             xpos += 150;
 
@@ -37,15 +49,44 @@
               alpha: 1
             }), 500*(count) - 500);
           }
+          this.popupText(scene,'add()');
         }
 
-        remove(item,pointerToNext,line){
-          item.animate({position:{x: item.position.x, y: item.position.y}, time: .5 , func: 'inOutExpo', alpha: 0.01});
-          pointerToNext.animate({position:{x: pointerToNext.position.x, y: pointerToNext.position.y}, time: .5 , func: 'inOutExpo', alpha: 0.01});
-          line.animate({position:{x: line.position.x, y: line.position.y}, time: .5 , func: 'inOutExpo', alpha: 0.01});
+        remove(item,pointerToNext,line,scene){
+          item.animate({
+            position:{x: item.position.x, y: item.position.y},
+            time: .5 ,
+            func: 'inOutExpo',
+            alpha: 0.01});
+          pointerToNext.animate({
+            position:{x: pointerToNext.position.x, y: pointerToNext.position.y},
+            time: .5 ,
+            func: 'inOutExpo',
+            alpha: 0.01});
+          line.animate({
+            position:{x: line.position.x, y: line.position.y},
+            time: .5 ,
+            func: 'inOutExpo',
+            alpha: 0.01});
+          this.popupText(scene,'remove()')
         }
 
-
+        popupText(scene,str) {
+          const popupText = new Ani.Type.Text({
+            fill: true,
+            position: {x: 250, y: 250 },
+            text: str,
+            alpha: 0,
+            fontSize: 30 });
+          console.log(popupText);
+          scene.addChild(popupText);
+          popupText.animate({alpha: 1, time: 0.5});
+          popupText.animate({position: {y: 20}, time: 1});
+          setTimeout(() => popupText.animate({
+            alpha: .01,
+            time: 1
+          }), 1000);
+        }
       }
 
 
@@ -61,7 +102,11 @@
           this.fill = true;
           this.fillStyle = '#eef';
 
-          this.addChild(new Ani.Type.Text({ fill: true, text: opt.value, position: { x: this.size.x/2, y: this.size.y/2}, textBaseline: 'middle' }));
+          this.addChild(new Ani.Type.Text({ fill: true,
+            text: opt.value,
+            position: { x: this.size.x/2, y: this.size.y/2},
+             textBaseline: 'middle'
+           }));
         }
       }
 
@@ -70,8 +115,14 @@
           let linkedList = new LinkedList();
           let lineXPos = 100;
           for(let i = 1; i < 5; i++){
-            const item = new Item({ position: {x: (i+count), y:250+(50*i)}, value:i});
-            const pointerToNext = new Item({ position: {x: 30+(i+count+1), y:250+(50*i)}, value:'next'});
+            const item = new Item({
+              position: {x: (i+count), y:250+(50*i)},
+              value:i
+            });
+            const pointerToNext = new Item({
+               position: {x: 30+(i+count+1), y:250+(50*i)},
+               value:'next'
+             });
             scene.addChild(item);
             scene.addChild(pointerToNext);
             const line = new Ani.Type.Polygon({
@@ -83,11 +134,13 @@
             line.alpha = 0;
             scene.addChild(line);
             count++;
-            setTimeout(() => linkedList.add(item,pointerToNext,line), 1500*i - 1500);
-            setTimeout(() => linkedList.remove(item,pointerToNext,line), 1500*i + 8500)
+            setTimeout(() => linkedList.add(item,pointerToNext,line,scene), 1500*i - 1500);
+            setTimeout(() => linkedList.remove(item,pointerToNext,line,scene), 1500*i + 8500)
           }
 
-          const item = new Item({ position: {x: (4+count), y:250+(50*5)}, value:'NULL'});
+          const item = new Item({
+            position: {x: (4+count), y:250+(50*5)},
+            value:'NULL'});
           scene.addChild(item);
           setTimeout(() => linkedList.add(item), 1500*5 - 1500)
           setTimeout(() => linkedList.remove(item), 1500*5 + 8500)
