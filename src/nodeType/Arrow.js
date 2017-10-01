@@ -12,7 +12,7 @@ class Arrow extends Node {
     this.length = opt.length ? opt.length: 50;
 
     const line = new Polygon({
-      position: { x: 0, y: 0 },
+      position: { x: 1, y: 0 },
       points: [ {x: 0, y: 0 }, {x: this.length, y: 0} ],
       stroke: true
     });

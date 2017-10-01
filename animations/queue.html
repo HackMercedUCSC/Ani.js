@@ -42,6 +42,15 @@
           this.popupText(item.position, 'enqueue()');
         }
 
+        addArrow(item, pos) {
+          item.addChild(new Ani.Type.Arrow({
+            position: { x: 130, y: 20 },
+            arrowSize: 10,
+            length: 75,
+            rotation: Math.PI
+          }));
+        }
+
         remove(pos) {
           const item = this.items.shift();
           item.animate({
@@ -80,8 +89,10 @@
             const item = new Item({ position: { x: 135 * i , y: 45 }, value: i});
 
             setTimeout(() => queue.add(scene, item), 1000*i - 1000);
-            setTimeout(() => queue.remove({x: 0, y: 0}), 13000 - 1500*i);
-            // setTimeout(() => queue.remove({x: queue.position.x + 100, y: 32*i + 10}), 13000 - 1500*i)
+            setTimeout(() => queue.remove({x: 0, y: 0}), 12500 - 1500*i);
+            if(i < 5) {
+              setTimeout(() => queue.addArrow(item, { position: { x: 135 * i, y: 45 } }), 1000 * i);
+            }
           }
 
           Ani.init(scene, document.getElementById('canvas').getContext('2d'), window.innerWidth, window.innerHeight);
