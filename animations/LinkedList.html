@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="base.css">
+    <script src="../build/ani.js"></script>
+    <script>
+      let curr = 0;
+      let count = 0;
+      let xpos = 150;
+      class LinkedList extends Ani.Node {
+
+        constructor(opt) {
+          super(opt);
+
+          this.pos = [
+            {x: 156, y: 170, length: 100, rotation: 0},
+            {x: 230, y: 370, length: 180, rotation: 4.5},
+            {x: 470, y: 400, length: 180, rotation: 3.3},
+            {x: 80, y: 270, length: 100, rotation: .5}
+          ];
+        }
+
+        add(item,pointerToNext,line) {
+          if(pointerToNext == null || line == null){
+            item.animate({position:{x: xpos, y: 150}, time: 1, func: 'inOutBack'});
+          }else{
+            item.animate({position:{x: xpos, y: 150}, time: 1, func: 'inOutBack'});
+            pointerToNext.animate({position:{x: xpos + 30, y: 150}, time: 1, func: 'inOutBack'});
+            curr++;
+            xpos += 150;
+
+            setTimeout(() => line.animate({
+              position: {x: line.position.x, y: line.position.y},
+              time: 1.5,
+              alpha: 1
+            }), 1000*(count) - 500);
+          }
+        }
+      }
+
+      class Item extends Ani.Type.Rect {
+        constructor(opt) {
+          super(opt);
+
+          this.radius = 5;
+          this.size.x = 40;
+          this.size.y = 40;
+
+          this.fill = true;
+          this.fillStyle = '#eef';
+
+          this.addChild(new Ani.Type.Text({ fill: true, text: opt.value, position: { x: this.size.x/2, y: this.size.y/2}, textBaseline: 'middle' }));
+        }
+      }
+
+      function ready() {
+          const scene = new Ani.Node();
+          let linkedList = new LinkedList();
+          let lineXPos = 100;
+          for(let i = 1; i < 5; i++){
+            const item = new Item({ position: {x: (i+count), y:250+(50*i)}, value:i});
+            const pointerToNext = new Item({ position: {x: 30+(i+count+1), y:250+(50*i)}, value:'next'});
+            scene.addChild(item);
+            scene.addChild(pointerToNext);
+            const line = new Ani.Type.Polygon({
+              position: { x: lineXPos, y: 20 },
+              points: [ {x: xpos-30, y: 150 }, {x: xpos+50, y: 150} ],
+              stroke: true
+            });
+            lineXPos += 150;
+            line.alpha = 0;
+            scene.addChild(line);
+            count++;
+            setTimeout(() => linkedList.add(item,pointerToNext,line), 2000*i - 1000)
+          }
+
+          const item = new Item({ position: {x: (4+count), y:250+(50*5)}, value:'NULL'});
+          scene.addChild(item);
+          setTimeout(() => linkedList.add(item), 2000*5 - 1000)
+          Ani.init(scene, document.getElementById('canvas').getContext('2d'), 1000, 1000);
+      }
+    </script>
+  </head>
+<body onLoad="ready()">
+  <canvas id="canvas">Unable to load canvas!</canvas>
+</body>
+</html>

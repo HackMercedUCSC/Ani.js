@@ -163,7 +163,7 @@ class Node extends EventEmitter {
         let clipI = (i+1) % this.clipping.length;
         this.ctx.lineTo(this.clipping[clipI].x, this.clipping[clipI].y);
       }
-      this.ctx.closePath();  
+      this.ctx.closePath();
       this.ctx.clip();
     }
 
