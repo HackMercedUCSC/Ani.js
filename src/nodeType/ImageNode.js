@@ -12,7 +12,6 @@ class ImageNode extends Node {
     super(opt);
     this.image = new Image();
     this.image.src = opt.src ? opt.src : "";
-    this.position = opt.position ? new Victor.fromObject(opt.position) : new Victor(100, 100);
     this.size = opt.size ? new Victor.fromObject(opt.size) : null;
     this.offset = opt.offset ? new Victor.fromObject(opt.offset) : new Victor(0, 0);
     this.crop = opt.crop ? new Victor.fromObject(opt.crop) : null;

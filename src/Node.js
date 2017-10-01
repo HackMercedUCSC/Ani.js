@@ -53,7 +53,7 @@ class Node extends EventEmitter {
       saturate: opt.filters.saturate !== undefined ? opt.filters.saturate : -1,
       sepia: opt.filters.sepia !== undefined ? opt.filters.sepia : -1,
       dropShadow: {
-        offset: opt.offset ? new Victor.fromObject(opt.offset) : new Victor(0, 0),
+        offset: opt.filters.dropShadow.offset ? new Victor.fromObject(opt.filters.dropShadow.offset) : new Victor(0, 0),
         blurRadius:opt.filters.dropShadow.blurRadius ? opt.filters.dropShadow.blurRadius : 0,
         color: opt.filters.dropShadow.color ? opt.filters.dropShadow.color : 'black',
         inherit: true
