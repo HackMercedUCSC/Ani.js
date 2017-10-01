@@ -17,9 +17,12 @@
             {x: 470, y: 400, length: 180, rotation: 3.3},
             {x: 80, y: 270, length: 100, rotation: .5}
           ];
+
+          this.items = [];
         }
 
         add(item,pointerToNext,line) {
+          this.items.push(item);
           if(pointerToNext == null || line == null){
             item.animate({position:{x: xpos, y: 150}, time: 1, func: 'inOutBack'});
           }else{
@@ -30,12 +33,22 @@
 
             setTimeout(() => line.animate({
               position: {x: line.position.x, y: line.position.y},
-              time: 1.5,
+              time: 0.75,
               alpha: 1
-            }), 1000*(count) - 500);
+            }), 500*(count) - 500);
           }
         }
+
+        remove(item,pointerToNext,line){
+          item.animate({position:{x: item.position.x, y: item.position.y}, time: .5 , func: 'inOutExpo', alpha: 0.01});
+          pointerToNext.animate({position:{x: pointerToNext.position.x, y: pointerToNext.position.y}, time: .5 , func: 'inOutExpo', alpha: 0.01});
+          line.animate({position:{x: line.position.x, y: line.position.y}, time: .5 , func: 'inOutExpo', alpha: 0.01});
+        }
+
+
       }
+
+
 
       class Item extends Ani.Type.Rect {
         constructor(opt) {
@@ -70,12 +83,14 @@
             line.alpha = 0;
             scene.addChild(line);
             count++;
-            setTimeout(() => linkedList.add(item,pointerToNext,line), 2000*i - 1000)
+            setTimeout(() => linkedList.add(item,pointerToNext,line), 1500*i - 1500);
+            setTimeout(() => linkedList.remove(item,pointerToNext,line), 1500*i + 8500)
           }
 
           const item = new Item({ position: {x: (4+count), y:250+(50*5)}, value:'NULL'});
           scene.addChild(item);
-          setTimeout(() => linkedList.add(item), 2000*5 - 1000)
+          setTimeout(() => linkedList.add(item), 1500*5 - 1500)
+          setTimeout(() => linkedList.remove(item), 1500*5 + 8500)
           Ani.init(scene, document.getElementById('canvas').getContext('2d'), 1000, 1000);
       }
     </script>
