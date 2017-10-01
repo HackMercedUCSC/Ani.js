@@ -8,11 +8,11 @@
         constructor(opt) {
           super(opt);
 
-          this.topOffset = -180;
+          this.topOffset = -180 - 200;
           this.downTo = -5;
 
-          this.addChild(new Ani.Type.Rect({ fill: true, fillStyle: '#000', position: {x: -5, y: -145}, size: {x: 10, y: 150}}));
-          this.addChild(new Ani.Type.Rect({ fill: true, position: {x: -20, y: -5}, size: {x: 40, y: 10}, radius: 5}));
+          this.addChild(new Ani.Type.Rect({ fill: true, fillStyle: '#000', position: {x: -5, y: -145-200}, size: {x: 10, y: 150+200}}));
+          this.addChild(new Ani.Type.Rect({ fill: true, position: {x: -40, y: -5}, size: {x: 80, y: 10}, radius: 5}));
 
           this.items = [];
         }
@@ -49,7 +49,7 @@
         }
 
         popupText(str) {
-          const popupText = new Ani.Type.Text({ fill: true, position: {x: 0, y: 50 }, text: str, alpha: 0 });
+          const popupText = new Ani.Type.Text({ fill: true, position: {x: 0, y: 50 }, text: str, alpha: 0, fontSize: 30 });
           this.addChild(popupText);
           popupText.animate({alpha: 1, time: 0.5});
           popupText.animate({position: {y: 20}, time: 1});
@@ -86,9 +86,9 @@
         constructor(opt) {
           super(opt);
 
-          this.radius = 5;
-          this.size.x = 30;
-          this.size.y = 30;
+          this.radius = 10;
+          this.size.x = 60;
+          this.size.y = 60;
 
           this.fill = true;
           this.fillStyle = '#fc8';
@@ -99,17 +99,17 @@
 
       function ready() {
           const scene = new Ani.Node();
-          const stack = new Stack({ position: { x: 150, y: 250 }});
+          const stack = new Stack({ position: { x: 150, y: 500 }});
           scene.addChild(stack);
 
           const items = [];
           for (let i = 1; i <= 5; i++) {
-            const item = new Item({ position: { x: 30, y: 32*i + 60 }, value: i});
+            const item = new Item({ position: { x: 30, y: 64*i + 60 }, value: i});
             items.push(item);
             scene.addChild(item);
 
             setTimeout(() => stack.add(item), 2000*i - 1000)
-            setTimeout(() => stack.remove({x: stack.position.x + 100, y: 32*i + 60}), 18000 - 1500*i)
+            setTimeout(() => stack.remove({x: stack.position.x + 100, y: 64*i + 60}), 18000 - 1500*i)
           }
 
           Ani.init(scene, document.getElementById('canvas').getContext('2d'), window.innerWidth, window.innerHeight);
