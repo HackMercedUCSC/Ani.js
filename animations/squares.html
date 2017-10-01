@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="base.css">
+    <script src="../build/ani.js"></script>
+    <script>
+
+      const FONT = 'MADE GoodTime Grotesk';
+
+      function ready() {
+          const canvas = document.getElementById('canvas');
+
+          const scene = new Ani.Node();
+          const text = new Ani.Type.Text({
+            position: { x: document.body.clientWidth/2, y: document.body.clientHeight/2 },
+            text: '\u0054\u0068\u0061\u006E\u006B\u0020\u0079\u006F\u0075\u0021',
+            font: FONT,
+            fontSize: 250,
+            textAlign: 'center',
+            fillStyle: '#fff'
+          });
+
+          const SQUARE_SIZE = 20;
+          for (let x = 2; x < document.body.clientWidth; x += SQUARE_SIZE+2) { // Go across grid
+            for (let y = 2; y < 30; y += SQUARE_SIZE+2) {
+              const rect = new Ani.Type.Rect({ // Create rectangle
+                position: {x: x, y: 1500 },
+                size: {x: SQUARE_SIZE, y: SQUARE_SIZE},
+                fillStyle: '#6ba'
+              });
+              scene.addChild(rect);
+
+              rect.animate({time: y/500 + x/500}, { // Animate to correct y position after delay
+                position: {y: y},
+                time: 1.0,
+                func: 'outCube' // Easing
+              });
+
+              rect.on('animationFinished', () => {
+                rect.animate({
+                  position: {x: Math.random()*4 - 2, y: Math.random()*4 - 2 },
+                  relative: true,
+                  time: 0.4
+                });
+              })
+            }
+          }
+
+          scene.addChild(text);
+
+          Ani.init(scene, canvas.getContext('2d'), window.innerWidth, window.innerHeight);
+      }
+    </script>
+  </head>
+<body onLoad="ready()">
+  <canvas id="canvas">Unable to load canvas!</canvas>
+</body>
+</html>

@@ -24,7 +24,7 @@
             {position:{x: item.position.x, y: this.position.y + this.topOffset}, time: 0.5, func: 'inOutQuad'},
             {
               position:{x: this.position.x - item.size.x/2, y: this.position.y + this.topOffset},
-              passThrough: {x: (item.position.x+this.position.x)/2, y: this.position.y + this.topOffset - 30},
+              passThrough: {x: (item.position.x+this.position.x)/2, y: this.position.y + this.topOffset - 50},
               time: 0.5,
               func: 'inQuad'
             },
@@ -91,7 +91,7 @@
           this.size.y = 30;
 
           this.fill = true;
-          this.fillStyle = '#eef';
+          this.fillStyle = '#fc8';
 
           this.addChild(new Ani.Type.Text({ fill: true, text: opt.value, position: { x: this.size.x/2, y: this.size.y/2}, textBaseline: 'middle' }));
         }
@@ -99,17 +99,17 @@
 
       function ready() {
           const scene = new Ani.Node();
-          const stack = new Stack({ position: { x: 150, y: 200 }});
+          const stack = new Stack({ position: { x: 150, y: 250 }});
           scene.addChild(stack);
 
           const items = [];
           for (let i = 1; i <= 5; i++) {
-            const item = new Item({ position: { x: 30, y: 32*i + 10 }, value: i});
+            const item = new Item({ position: { x: 30, y: 32*i + 60 }, value: i});
             items.push(item);
             scene.addChild(item);
 
             setTimeout(() => stack.add(item), 2000*i - 1000)
-            setTimeout(() => stack.remove({x: stack.position.x + 100, y: 32*i + 10}), 18000 - 1500*i)
+            setTimeout(() => stack.remove({x: stack.position.x + 100, y: 32*i + 60}), 18000 - 1500*i)
           }
 
           Ani.init(scene, document.getElementById('canvas').getContext('2d'), window.innerWidth, window.innerHeight);
@@ -117,6 +117,6 @@
     </script>
   </head>
 <body onLoad="ready()">
-  <canvas id="canvas">Unable to load canvas!</canvas>
+  <canvas id="canvas" style="margin-left: 40%">Unable to load canvas!</canvas>
 </body>
 </html>
